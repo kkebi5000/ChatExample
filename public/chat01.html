@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>채팅 클라이언트 01</title>
+
+    <script src = "jquery-3.1.1.min.js"></script>
+    <script src = "socket.io.js"></script>
+    
+    <script>
+
+        //jquery에서 문서가 다 로딩됐을때 호출되는 $
+        $(function(){
+
+        });
+
+        function connect(){
+
+            //아래 인풋태그에서 쓰여진것을 $을 이용해 받을수 있다.
+            var host = $('#hostInput').val();
+            var port = $('#portInput').val();
+            connectToServer(host,port);
+        }
+
+        function connectToServer(host,port){
+            var url = 'http://' + host + ':' + port;
+            var option = {
+
+                //연결을 항상 새로만들라는 옵션
+                forceNew:true
+            };
+
+            //소켓서버 연결요청 메소드 io.connect() socket.io.js에 io라는 객체가 있다.
+            var socket = io.connect(url,option);
+
+            socket.on('connect', function(){ 
+                println('웹소켓 서버에 연결됨 -> ' + url);
+            });
+
+            //소켓은 기본적으로 연결이 끊어지지 않도록 만들어졌다. 만약 끊어졌더라도 자동으로 복구를 시도하게끔 되어있다.
+            socket.on('disconnect', function(){
+                println('웹소켓 서버연결 종료됨.');
+            });
+
+
+        }
+
+        function println(data){
+            console.log(data);
+            $('#results').append('<p>' + data + '</p>');
+        }
+
+
+    </script>
+</head>
+<body>
+    <h3>채팅 클라이언트 01</h3>
+    <br>
+    <br>
+    <div>
+        <input type="text" id="hostInput" value="localhost" />
+        <input type="text" id="portInput" value="3000" />
+        <input type="button" id="connectButton" value="연결하기" onclick = "connect()" />
+    </div>
+    <hr>
+    <p>결과</p>
+    <div id = "results"></div>
+</body>
+</html>
